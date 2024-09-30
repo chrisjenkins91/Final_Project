@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Do Not Disturb</title>
+    
+    <link rel="stylesheet" href="./CSS/style.css">
+    <link rel="stylesheet" href="./CSS/bootstrap.css">
+</head>
+<body>
+    <div class="container text-center mt-5">
+        <h1 id="game-title">Do Not Disturb!</h1>
+
+        <!-- Blackout screen (hidden at first)-->
+         <div id="blackout-screen"></div>
+
+         <!-- Game Area for the Monster and Player -->
+          <div class="row justify-content-center">
+            <div class="col-12">
+                <div class="game-area">
+                    <!-- Monster Location -->
+                    <div id="monster" class="character mx-auto"></div>
+                    <!-- Player Location -->
+                    <div id="player" class="player mx-auto"></div>
+                    <!-- Treasure Location -->
+                    <div id="treasure" class="treasure"></div>
+                </div>
+            </div>
+          </div>
+
+          <!-- Dice roll and messages-->
+          <button id="start-button" class="btn btn-primary btn-lg mt-3">Start Game</button>
+          <button id="roll-button" class="btn btn-success btn-lg mt-3" style="display: none;">Roll Dice</button>
+
+          <div class="info">
+            <p id="lives" style="display: none;">Lives: 3</p>
+            <p id="treasure-count" style="display: none;">Treasures Collected: 0/1</p>
+          </div>
+          <div id="message" class="alert alert-info mt-3">Whatever You Do. Don't Wake The Monster!!</div>
+          <button id="reset-button" class="btn btn-danger btn-lg" style="display: none;">Play Again</button>
+    </div>
+</body>
+<script type="text/javascript" src="./JS/app.js"></script>
+</html>

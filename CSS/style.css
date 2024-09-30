@@ -1,0 +1,52 @@
+body {
+    background-color: #f0f8ff;
+}
+
+h1 {
+    color: #2c3e50;
+}
+
+.game-area {
+    height: 400px;
+    background-color: #ecf0f1;
+    border: 2px solid #7f8c8d;
+    position: relative;
+}
+
+/* Monster and Player styling*/
+
+.character, .player {
+    height: 100px;
+    position: absolute;
+    background-size: cover;
+    transition: transorm 0.3s, left 0.5s; /* Smooth transtion*/
+}
+
+/* Player details */
+
+#player {
+    background-image: url();
+    top: 250px;
+    left: 10px; /* Start position*/
+}
+
+/* Monster details */
+
+#monster {
+    background-image: url();
+    top: 50px;
+    left: 250px;
+}
+
+/* Blackout screen */
+#blackout-screen {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    opacity: 0;
+    transition: opacity 0.5s;
+}
