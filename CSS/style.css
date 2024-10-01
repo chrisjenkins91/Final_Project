@@ -27,7 +27,7 @@ h1 {
 #player {
     background-image: url();
     top: 250px;
-    left: 10px; /* Start position*/
+    left: 10px; /* Start position */
 }
 
 /* Monster details */
@@ -50,3 +50,127 @@ h1 {
     opacity: 0;
     transition: opacity 0.5s;
 }
+
+#dice-container {
+    width: 100px;
+    height: 100px;
+    margin: 20px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #000;
+    border-radius: 10px;
+}
+
+#dice-face {
+    height: 10em;
+    width: 10em;
+    font-size: 40px; /* You can adjust this if needed */
+    font-family: 'Arial', sans-serif; /* Specify the font family */
+    font-weight: bold; /* Keep the font bold */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+
+.rolling {
+    animation: rollDice 1s ease-in-out;
+}
+
+@keyframes rollDice {
+    0% {
+        transform: rotate(0deg) scale(1); /* Start at normal size and no rotation */
+        opacity: 0.5; /* Partially transparent at the start */
+    }
+    25% {
+        transform: rotate(90deg) scale(1.2); /* Rotate and grow */
+        opacity: 1; /* Fully visible */
+    }
+    50% {
+        transform: rotate(180deg) scale(0.8); /* Shrink and rotate */
+        opacity: 0.7; /* Slightly transparent */
+    }
+    75% {
+        transform: rotate(270deg) scale(1.1); /* Grow slightly and rotate */
+        opacity: 0.9; /* Almost fully visible */
+    }
+    100% {
+        transform: rotate(360deg) scale(1); /* Return to original size and complete rotation */
+        opacity: 1; /* Fully visible */
+    }
+}
+
+@keyframes bounceAfterRoll {
+    0% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px); /* Moves up slightly */
+    }
+    100% {
+        transform: translateY(0); /* Returns to the original position */
+    }
+}
+
+.rolling {
+    animation: rollDice 1s ease-in-out;
+}
+
+.bounce {
+    animation: bounceAfterRoll 0.5s ease-in-out;
+}
+
+/* Blackout screen styles */
+body.blackout-bg {
+    background-color: black; /* Start with a black background */
+}
+
+body.fade-in-bg {
+    animation: backgroundFadeIn 2s forwards ease-in-out;
+}
+
+@keyframes backgroundFadeIn {
+    0% {
+        background-color: black; /* Start from blackout color */
+    }
+    100% {
+        background-color: #f0f8ff; /* Transition to final background color */
+    }
+}
+
+/* Fade-in animation */
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.8s ease-in-out;
+}
+
+/* Dice rolling bounce effect */
+@keyframes rollBounce {
+    0% { transform: rotate(0deg) scale(1); }
+    25% { transform: rotate(90deg) scale(1.1); }
+    50% { transform: rotate(180deg) scale(1); }
+    75% { transform: rotate(270deg) scale(1.1); }
+    100% { transform: rotate(360deg) scale(1); }
+}
+
+.rolling {
+    animation: rollBounce 1s cubic-bezier(0.25, 1.25, 0.5, 1);
+}
+
+/* Smooth transitions for all game elements */
+#game-title, #lives, #treasure-count, #roll-button, #message, #reset-button {
+    transition: opacity 0.5s ease-in, transform 0.5s ease-in;
+}
+
