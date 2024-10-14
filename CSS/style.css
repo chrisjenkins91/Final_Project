@@ -1,9 +1,10 @@
 body {
-    background-color: #f0f8ff;
+    background-color: #0a0a0a;
 }
 
 h1 {
-    color: #2c3e50;
+    color: red;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
 .game-area {
@@ -13,10 +14,12 @@ h1 {
     position: relative;
 }
 
+
 /* Monster and Player styling*/
 
 .character, .player {
     height: 100px;
+    width: 100px;
     position: absolute;
     background-size: cover;
     transition: transorm 0.3s, left 0.5s; /* Smooth transtion*/
@@ -26,16 +29,17 @@ h1 {
 
 #player {
     background-image: url();
-    top: 250px;
-    left: 10px; /* Start position */
+    top: 0;
+    left: 0; /* Start position */
 }
 
 /* Monster details */
 
 #monster {
-    background-image: url();
-    top: 50px;
-    left: 250px;
+    background-image: url(../IMG/monster-pic.png);
+    top: 0;
+    right: 0;
+    left: auto;
 }
 
 /* Blackout screen */
@@ -50,6 +54,41 @@ h1 {
     opacity: 0;
     transition: opacity 0.5s;
 }
+
+.blackout-screen {
+    transition: opacity 1s ease;
+}
+.fade-in-bg {
+    transition: background-color 1s ease;
+}
+
+.danger-zone {
+    background-color: red; /* Danger zones are red */
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    border-radius: 50%;
+}
+
+.treasure {
+    background-color: gold; /* Treasures are golden */
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    border-radius: 50%;
+}
+
+
+.treasure-collected {
+    animation: shine 1s infinite;
+}
+
+@keyframes shine {
+    0% { box-shadow: 0 0 10px gold; }
+    50% { box-shadow: 0 0 30px gold; }
+    100% { box-shadow: 0 0 10px gold; }
+}
+
 
 #dice-container {
     width: 100px;
@@ -134,6 +173,15 @@ body.fade-in-bg {
 @keyframes backgroundFadeIn {
     0% {
         background-color: black; /* Start from blackout color */
+    }
+    25% {
+        background-color: #424242;
+    }
+    50% {
+        background-color: #959494;
+    }
+    75% {
+        background-color: #dedede;
     }
     100% {
         background-color: #f0f8ff; /* Transition to final background color */

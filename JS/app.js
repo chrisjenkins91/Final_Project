@@ -1,65 +1,50 @@
 //* Variables to grab the DOM Elements
 
 let gameArea = document.querySelector(".game-area");
-// console.log(gameArea);
-
 const dice = document.getElementById("dice-container");
-// console.log(dice);
-
 const player = document.getElementById("player");
-// console.log(player);
-
 const monster = document.getElementById("monster");
-// console.log(monster);
-
 const treasure = document.getElementById("treasure")
-// console.log(treasure);
-
 const rollButton = document.getElementById("roll-button");
-// console.log(rollButton);
-
 const startButton = document.getElementById("start-button");
-// console.log(startButton);
-
 const resetButton = document.getElementById("reset-button");
-// console.log(resetButton);
-
 const title = document.getElementById("game-title");
-// console.log(title);
-
 const message = document.getElementById("message");
-// console.log(message);
-
 const livesDisplay = document.getElementById("lives");
-// console.log(livesDisplay);
-
 const treasureCountDisplay = document.getElementById("treasure-count")
-// console.log(treasureCountDisplay);
-
 const blackoutScreen = document.getElementById("blackout-screen");
-// console.log(blackoutScreen);
 
-//* Game state variables
-let playerPosition = 0;
-let dangerZones = [100, 200, 400, 600, 800, 1000, 1200, 1500]; // Danger spots where monster can wake up
+//* Game variables
+let playerPosition = 0; // Position where player starts
+let monsterPosition = gameArea.clientWidth - 50;
+let dangerZones = []; // Danger spots where monster can wake up
 let lives = 3;
+let treasures = []; // Array to hold treasure positions
+let treasureNum = 3;
 let treasuresCollected = 0;
 let gameOver = false;
 let gameWon = false;
 
+//* Roll limit variables
+let rollCount = 0; // Counter for rolls
+const maxRolls = 10; // Set the roll limit to 10
+
 //* Event Listener to start game when button is clicked
 startButton.addEventListener("click", startGame);
 
+//* Event listener to call rollDice function when "clicked"
+rollButton.addEventListener("click", rollDice)
 
-function startGame(){
+resetButton.addEventListener("click", resetGame);
 
-    debugger
+function startGame(){ // function to start game
+
     // Trigger blackout effect
     blackoutScreen.style.display = "block";
     blackoutScreen.style.opacity = "1";
 
-     // Reset body background color to match the blackout
-     document.body.classList.add('blackout-bg');
+    // Reset body background color to match the blackout
+    document.body.classList.add('blackout-bg');
 
     message.classList.remove("alert", "alert-info");
     message.textContent = "";
@@ -71,9 +56,6 @@ function startGame(){
         // Fade out blackout screen and start background fade-in
         blackoutScreen.style.opacity = "0";
 
-        
-
-        // After the blackout fades out, start fading in elements
         setTimeout(() => {
             title.textContent = "Let's Get Out Of Here!!";
             rollButton.style.display = ""; 
@@ -96,112 +78,57 @@ function startGame(){
             message.classList.add("alert", "alert-info");
             message.textContent = "Roll the dice!";
 
-            // Fade out blackout screen
-            blackoutScreen.style.opacity = "0";
-
             dangerZones = generateDangerZones(3, gameArea.clientWidth); // Generate 3 danger zones
             console.log(dangerZones); // Debug to see the generated danger zones
 
             placeTreasure();
-        }, 800); // Give blackout screen some time to fade out
-    }, 500); // Blackout effect lasts 1 second
+        }, 800);
+    }, 500);
 }
 
-
-
-
-function winGame(){
-    message.textContent = "Congrats!! You Win!!!";
-    rollButton.style.display = "none"; // Hide roll button
-    dice.style.display = "none"; // Hide dice after winning
-    gameOver = true;
-    resetButton.classList.remove("d-none");
-}
-
-
-//* Event listener to call rollDice function when "clicked"
-rollButton.addEventListener("click", rollDice)
-
-
-function rollDice() {
-    debugger
-    if (gameOver) return;
-
-    // Show rolling animation
-    dice.classList.add("rolling");
-
-    // Generate a number between 1 and 6 after the animation
-    setTimeout(() => {
-        dice.classList.remove("rolling"); // Stop the rolling animation
-        const diceRoll = Math.floor(Math.random() * 6) + 1; // Generate dice roll
-        dice.textContent = diceRoll; // Update dice display with rolled number
-
-        // Add the bounce effect after rolling
-        dice.classList.add("bounce");
-        setTimeout(() => {
-            dice.classList.remove("bounce", "fade-in"); // Remove bounce effect after it finishes
-        }, 500); // Duration of the bounce
-
-        // Move the player based on the dice roll
-        movePlayer(diceRoll);
-    }, 1000); // Animation duration is 1 second
-}
-
-
-
-
-function movePlayer(diceRoll) {
-    playerPosition += diceRoll * 10; //Move the player by 10 px per dice roll
-    player.style.left = playerPosition + "px";
-
-    // Check if the player lands on treasure
-    if (playerPosition >= 500 && playerPosition <= 550 && treasuresCollected === 0) {
-        collectTreasure();
-    }
-
-    // Check if the player landed on a danger zone
-    if (dangerZones.includes(playerPosition)) {
-        wakeUpMonster();
-    } 
-    //Check if the player wins the game
-    else if (playerPosition >= 700 && treasuresCollected === 1) {
-        winGame();
-    } 
-    // Otherwise, keep the game going
-    else {
-        message.textContent = `You rolled a ${diceRoll}. Keep going!`
-    }
+function isValidPosition(position, existingPositions) {
+    const buffer = 50; // Minimum distance between treasures
+    return !existingPositions.some(pos => Math.abs(position - pos) < buffer);
 }
 
 function placeTreasure() {
-    const gameAreaWidth = gameArea.clientWidth; // Width of the game area
-    const treasurePosition = Math.floor(Math.random() * (gameAreaWidth / 10)) * 10; // Random position aligned to 10px increments
-    treasure.style.left = `${treasurePosition}px`;
+    treasures = [];
+    const gameAreaWidth = gameArea.clientWidth;
+    const maxPosition = gameAreaWidth - 10; // Prevent treasure from touching the right edge
+
+    for (let i = 0; i < treasureNum; i++) {
+        let treasurePosition;
+
+        do {
+            treasurePosition = Math.floor(Math.random() * (maxPosition / 10)) * 10;
+        } while (!isValidPosition(treasurePosition, dangerZones) || !isValidPosition(treasurePosition, treasures));
+
+        // Add the treasure position to the array
+        treasures.push(treasurePosition); 
+
+        // Create and place the treasure element in the game area
+        let treasureElement = document.createElement('div');
+        treasureElement.classList.add('treasure', 'fade-in');
+        treasureElement.style.left = `${treasurePosition}px`;
+        gameArea.appendChild(treasureElement);
+    }
 }
 
-
-function collectTreasure(){
-    debugger
-    treasuresCollected += 1;
-    message.classList.add("alert", "alert-info");
-    message.textContent = "You found the treasure! Now reach the end!";
-    treasureCountDisplay.style.display = "block";
-    
-
-    //Disable the roll button so the player can see the message
-    rollButton.disabled = true;
-    setTimeout(() => {
-        treasureCountDisplay.textContent = `Treasures Collected: ${treasuresCollected}/1`
-        treasure.style.display = "none";
-        rollButton.disabled = false;
-    }, 1000) // Re-enable the button after 1 second
+function respawnTreasure() {
+    if (treasuresCollected < treasureNum) {
+        setTimeout(() => {
+            placeTreasure(); // Call the function to place new treasures
+        }, 5000); // Wait 5 seconds before respawning
+    }
 }
 
-//* Function to make dangerZones random
-function generateDangerZones(numZones, gameWidth) {
+function generateDangerZones(numZones, gameWidth) { // function to generate danger zones
+
+
     const zones = new Set();
+
     while (zones.size < numZones) {
-        const position = Math.floor(Math.random() * (gameWidth / 10)) * 10; // Align to 10px increments
+        const position = Math.floor(Math.random() * (gameWidth / 10)) * 10;
         if (!zones.has(position)) {
             zones.add(position);
         }
@@ -209,60 +136,232 @@ function generateDangerZones(numZones, gameWidth) {
     return Array.from(zones);
 }
 
+function winGame(){ // function to win game
+    rollButton.style.display = "none"; // Hide roll button
+    dice.classList.add("d-none");
+    gameOver = true; // Make sure game is over
+    gameWon = true; // Mark the game as won
+    resetButton.classList.remove("d-none");
+    resetButton.style.display = "";
 
-function wakeUpMonster(){
-    lives -= 1; // Lose a life
-    livesDisplay.innerText = `Lives: ${lives}`; // Update lives display
-    message.textContent = `Uh Ohh! You've starlted the monster!! You have ${lives} lives left.`
-    monster.style.backgroundImage = "url('')" // Change to wake monster
+    if (lives === 3) {
+        message.textContent = "";
+        message.textContent = "You evaded the monster with no problems. You win!!!";
+    } else {
+        message.textContent = "";
+        message.textContent = "Whew!! That was close... but you made it out!!!! You win!!!";
+    }
+}
+
+function rollDice() { // function to roll dice after rollButton is clicked
+    
+    if (gameOver) {
+        if (lives <= 0) resetGameState();
+        return; // Stop the function if the game is over
+    } 
+    // Increment the roll count
+    rollCount++;
+
+    // Check if the roll count exceeds the limit
+    if (rollCount > maxRolls) {
+        wakeUpMonster(); // Startle the monster if limit is hit
+        return;
+    }
+
+    
+
+    // Show rolling animation
+    dice.classList.add("rolling");
+
+    dice.style.fontSize = "40px";
+    dice.style.borderRadius = "2px solid #000";
+
+    setTimeout(() => {
+        
+        dice.classList.remove("rolling"); // Stop the rolling animation
+        const diceRoll = Math.floor(Math.random() * 6) + 1; // Generate dice roll
+        dice.textContent = diceRoll; // Update dice display with rolled number
+
+        movePlayer(diceRoll);
+        moveMonster(diceRoll);
+
+        // Add the bounce effect after rolling
+        dice.classList.add("bounce");
+        setTimeout(() => {
+            dice.classList.remove("bounce", "fade-in"); // Remove bounce effect after it finishes
+        }, 500);
+        
+    }, 1000);
+}
+
+function movePlayer(diceRoll) { // function to move player after dice is rolled
+    
+    message.textContent = `You rolled a ${diceRoll}. Let's keep on pushing...`;
+
+    playerPosition += diceRoll * 15; // Move the player by 15px per dice roll
+    player.style.left = playerPosition + "px";
+
+    if (playerPosition > gameArea.clientWidth) {
+        playerPosition = gameArea.clientWidth; // Stop at the edge
+    };
+
+    player.style.left = playerPosition + "px"; // Update player's postion
+    
+    if (playerPosition >= 215 && playerPosition <= 275 && treasuresCollected === 0) {
+        collectTreasure();
+    };
+
+    if (dangerZones.includes(playerPosition)) {
+        
+        if (lives > 1) { // Allow waking the monster but only if lives are greater than 1
+            wakeUpMonster();
+            
+        } else {
+            // Reset game state if no lives left
+            if (gameOver) resetGame();
+        }
+    } 
+
+    if (playerPosition >= gameArea.clientWidth && treasuresCollected === 1) {
+        winGame();
+    } 
+    
+}
+
+function createDangerZoneMarkers() {
+    dangerZones.forEach(zone => {
+        let marker = document.createElement('div');
+        marker.classList.add('danger-zone');
+        marker.style.left = `${zone}px`;
+        gameArea.appendChild(marker);
+    });
+}
+
+function increaseMonsterSpeed() {
+    monsterSpeed +=1;
+}
+
+function moveMonster(diceRoll) {
+    if (gameOver) return;
+
+    // Calculate monster's speed based on distance from player
+    const relativeDistanceSpeed = calculateMonsterSpeed();
+    
+    // Check whether the monster should move left or right
+    let movementDirection = playerPosition > monsterPosition ? 1 : -1;
+
+    // Calculate the movement based on dice roll and speed
+    let newMonsterPosition = monsterPosition + movementDirection * diceRoll * (5 + relativeDistanceSpeed * 10);
+    
+    // Apply boundary constraints to prevent the monster from moving off-screen
+    newMonsterPosition = applyBoundaryConstraints(newMonsterPosition);
+
+    // Update the monster's position visually
+    updateMonsterPosition(newMonsterPosition);
+}
+
+// Helper function to calculate monster speed based on distance from player
+function calculateMonsterSpeed() {
+    return Math.abs(playerPosition - monsterPosition) / gameArea.clientWidth;
+}
+
+// Helper function to apply boundary constraints (prevent moving off-screen)
+function applyBoundaryConstraints(position) {
+    if (position < 0) {
+        return 0;
+    } else if (position > gameArea.clientWidth - monster.offsetWidth) {
+        return gameArea.clientWidth - monster.offsetWidth;
+    }
+    return position;
+}
+
+// Update the monster's position on the screen
+function updateMonsterPosition(newPosition) {
+    monsterPosition = newPosition;
+    monster.style.left = newPosition + "px"; // Update the CSS to reflect the new position
+}
+
+
+
+function collectTreasure(){ // function to collect treasure when landed on treasure zone
+    rollCount = 0;
+    treasuresCollected += 1;
+    message.classList.add("alert", "alert-info");
+    message.textContent = "";
+    treasureCountDisplay.style.display = "block";
+    rollButton.disabled = true;
+    setTimeout(() => {
+        treasureCountDisplay.textContent = `Treasures Collected: ${treasuresCollected}/1`
+
+        treasure.style.display = "none";
+        rollButton.disabled = false;
+        message.textContent = `You found the treasure! Now LET'S GET OUT OF HERE`;
+    }, 1000)
+}
+
+function wakeUpMonster(){ // function to wake up monster if player land on danger zones
+    
+    rollCount = 0
+    lives -= 1;
+    livesDisplay.innerText = `Lives: ${lives}`;
+    message.textContent = `Uh Ohh! You've starlted the monster!! You have ${lives} lives left.`;
     rollButton.disabled = true;
     
     if (lives <= 0) {
         gameOver = true;
-        message.textContent = `Game Over! You've lost all of your lives.`
-        resetButton.style.display = ""; // Shows reset button
+        message.textContent = `Awww man!! You woke up the monster!!!`
+        dice.classList.add("d-none");
+        rollButton.style.display = "none"
+        resetButton.style.display = ""; 
+        resetButton.classList.remove("d-none");
+    } else if (lives <= 0 && treasuresCollected === 1) {
+        gameOver = true;
+        message.textContent = `You almost had it. You woke the up the monster!!! `
+        dice.classList.add("d-none");
+        rollButton.style.display = "none"
+        resetButton.style.display = ""; 
+        resetButton.classList.remove("d-none");
     } else {
         setTimeout(() => {
-            rollButton.disabled = false; // Enable roll Button after a short delay
-        }, 1000) // Dely for 1 second
+            rollButton.disabled = false;
+        }, 500)
+        return;
     }
 }
 
-
-// Reset game logic
-resetButton.addEventListener("click", resetGame);
-
-
-function resetGame() {
+function resetGame() { // Reset game function
     resetGameState();
 }
 
-function resetGameState() {
+function resetGameState() { // function to reset the game state of elements variables
+    blackoutScreen.style.display = "none";  
+    blackoutScreen.style.opacity = "0";     
     playerPosition = 0;
     player.style.left = playerPosition + "px";
-    monster.style.backgroundImage = "url('')";
+    monsterPosition = 0;
+    monster.style.right = monsterPosition + "px";
+    monster.style.left = "auto";
     rollButton.style.display = "";
     message.classList.remove("alert", "alert-info");
-    treasure.style.display = "block"; // Show treasure again
+    treasure.style.display = "block";
     message.textContent = 'Roll the dice to start!';
 
-    // Reset lives and treasures
     lives = 3;
     treasuresCollected = 0;
-
-    // Update and hide the lives and treasure count display
+    rollCount = 0; // Reset the roll counter
     livesDisplay.textContent = `Lives: ${lives}`;
-    treasureCountDisplay.style.display = "none";
+    treasureCountDisplay.style.display = "";
     treasureCountDisplay.textContent = `Treasures Collected: ${treasuresCollected}/1`;
 
-    // Hide the reset button and update the title
     resetButton.style.display = "none";
     title.textContent = "Do Not Disturb!";
 
-    // Reset game state
     gameOver = false;
 
-    // Re-enable roll button
-    rollButton.disabled = false; // Ensure the roll button is enabled
-    rollButton.addEventListener("click", rollDice); // Ensure event listener is attached
+    dice.classList.remove("d-none");
+
+    rollButton.disabled = false;
+    rollButton.removeEventListener("click", rollDice);
+    rollButton.addEventListener("click", rollDice)
+    message.classList.add("alert", "alert-info");
 }
