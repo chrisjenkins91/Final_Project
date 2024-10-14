@@ -45,16 +45,18 @@ function startGame(){ // function to start game
 
     // Reset body background color to match the blackout
     document.body.classList.add('blackout-bg');
-
+    message.classList.remove("d-none");
     message.classList.remove("alert", "alert-info");
     message.textContent = "";
 
     setTimeout(() => {
+        document.body.style.backgroundImage = "none";
         title.textContent = "";
         startButton.classList.add("d-none")
 
         // Fade out blackout screen and start background fade-in
         blackoutScreen.style.opacity = "0";
+        
 
         setTimeout(() => {
             title.textContent = "Let's Get Out Of Here!!";
@@ -78,7 +80,7 @@ function startGame(){ // function to start game
             message.classList.add("alert", "alert-info");
             message.textContent = "Roll the dice!";
 
-            dangerZones = generateDangerZones(3, gameArea.clientWidth); // Generate 3 danger zones
+            dangerZones = generateDangerZones(4, gameArea.clientWidth); // Generate 3 danger zones
             console.log(dangerZones); // Debug to see the generated danger zones
 
             placeTreasure();
@@ -280,8 +282,6 @@ function updateMonsterPosition(newPosition) {
     monsterPosition = newPosition;
     monster.style.left = newPosition + "px"; // Update the CSS to reflect the new position
 }
-
-
 
 function collectTreasure(){ // function to collect treasure when landed on treasure zone
     rollCount = 0;
