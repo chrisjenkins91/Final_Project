@@ -359,7 +359,6 @@ function collectTreasure(index){ // function to collect treasure when landed on 
 }
 
 function wakeUpMonster(){ // function to wake up monster if player land on danger zones
-    debugger
     rollCount = 0
     lives -= 1;
     livesDisplay.innerText = `Lives: ${lives}`;
