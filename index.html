@@ -18,14 +18,14 @@
          <!-- Game Area for the Monster and Player -->
           <div class="row justify-content-center">
             <div class="col-12">
-                <div class="game-area d-none">
+                <div class="game-area d-none d-flex align-items-center">
                     <!-- Monster Location -->
                     <div id="monster" class="character mx-auto">
                       
                     </div>
                     <!-- Player Location -->
                     <div id="player" class="player mx-auto">
-                      <img src="IMG/monster-pic.png" alt="" class="img-fluid">
+                      
                     </div>
                     <!-- Treasure Location -->
                     <div id="treasure" class="treasure"></div>
@@ -36,14 +36,14 @@
           <!-- Dice roll and messages-->
            
           <div id="dice-container" class="d-flex justify-content-center d-none">
-            <div id="dice-face" class="dice-display p-3">1</div>
+            <div id="dice-face" class="dice-display p-3 text-light">1</div>
           </div>
-          <button id="start-button" class="btn btn-primary btn-lg mt-3">Start Game</button>
+          <button id="start-button" class="btn btn-warning btn-lg mt-3">Start Game</button>
           <button id="roll-button" class="btn btn-success btn-lg mt-3" style="display: none;">Roll Dice</button>
 
           <div class="info">
-            <p id="lives" style="display: none;">Lives: 3</p>
-            <p id="treasure-count" style="display: none;">Treasures Collected: 0/1</p>
+            <p id="lives" style="display: none;" class="text-light">Lives: 3</p>
+            <p id="treasure-count" style="display: none;" class="text-light">Treasures Collected: 0/4</p>
           </div>
           <div id="message" class="alert alert-info mt-3 d-none">Whatever You Do. Don't Wake The Monster!!</div>
           <button id="reset-button" class="btn btn-danger btn-lg d-none">Play Again</button>

@@ -2,11 +2,12 @@ body {
     background-image: url(../IMG/HD-wallpaper-monster-cool-smile.jpg);
     background-repeat: no-repeat;
     background-size: cover;
-    background-color: #0a0a0a;
+    background-color: black;
     width: 100%;
     height: 100%;
     
 }
+
 
 h1 {
     color: red;
@@ -39,7 +40,7 @@ h1 {
 /* Player details */
 
 #player {
-    background-image: url();
+    background-image: url(../IMG/pngwing.com.png);
     top: 0;
     left: 0; /* Start position */
     z-index: 1;
@@ -76,19 +77,22 @@ h1 {
 }
 
 .danger-zone {
-    background-color: red; /* Danger zones are red */
-    width: 20px;
-    height: 20px;
-    position: absolute;
-    border-radius: 50%;
+    position: absolute; /* So we can move them around the game area */
+    width: 40px; /* Size of the danger zone */
+    height: 40px; /* Same height to make it square */
+    background-color: red; /* Bright red so it stands out */
+    opacity: 0.5; /* Slightly see-through so we can still see what's behind */
+    border-radius: 10px; /* Slightly rounded corners for style */
 }
 
+
 .treasure {
-    color: gold;
-    width: 100px;
-    height: 100px;
+    background-image: url(../IMG/—Pngtree—game\ treasure\ chest_4705366.png);
+    background-size: cover;
+    width: 40px;
+    height: 30px;
     position: absolute;
-    border-radius: 50%;
+    
     
 }
 
@@ -111,7 +115,7 @@ h1 {
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 2px solid #000;
+    border: 2px solid red;
     border-radius: 10px;
 }
 
@@ -184,23 +188,6 @@ body.fade-in-bg {
     animation: backgroundFadeIn 2s forwards ease-in-out;
 }
 
-@keyframes backgroundFadeIn {
-    0% {
-        background-color: black; /* Start from blackout color */
-    }
-    25% {
-        background-color: #424242;
-    }
-    50% {
-        background-color: #959494;
-    }
-    75% {
-        background-color: #dedede;
-    }
-    100% {
-        background-color: #f0f8ff; /* Transition to final background color */
-    }
-}
 
 /* Fade-in animation */
 @keyframes fadeIn {
